@@ -6,7 +6,7 @@ import Shoe from './src/components/Shoe';
 export default function App() {
   return (
       <Canvas>
-      <pointLight position={[10,10,10]} />
+      <pointLight position={[10,0,10]} />
       <Suspense fallback={null}>
         <Shoe />
       </Suspense>
