@@ -7,7 +7,14 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 import * as THREE from 'three';
 
+import { SensorType, useAnimatedSensor } from 'react-native-reanimated';
+
 export default function Shoe() {
+
+    const animatedSensor = useAnimatedSensor(SensorType.GYROSCOPE, {
+  interval: 100,
+});
+
 
     const [base,normal,rough] = useLoader(TextureLoader, [require('../../assets/Airmax/textures/BaseColor.jpg'),require('../../assets/Airmax/textures/Normal.jpg'),require('../../assets/Airmax/textures/Roughness.png')])
 
@@ -24,6 +31,8 @@ export default function Shoe() {
             obj.traverse(child => {
                 if(child instanceof THREE.Mesh){
                     child.material.map = base;
+                    child.material.normalMap = normal;
+                    child.material.roughnessMap = rough;
                 }                   
             })
         }, [obj])
@@ -32,13 +41,17 @@ export default function Shoe() {
 
         useFrame((state, delta) => {
             if(shoeRef.current){
-                shoeRef.current.rotation.x +=delta;
-                shoeRef.current.rotation.y +=delta / 4;
+                let { x, y, z } = animatedSensor.sensor.value;
+                x = ~~(x * 100) / 5000;
+                y = ~~(y * 100) / 5000;
+                shoeRef.current.rotation.x += x;
+                shoeRef.current.rotation.y += y;
             }
-        })
+            
+          });
 
   return (
-    <mesh  ref={shoeRef} rotation={[1,0,0]}>
+    <mesh  ref={shoeRef} rotation={[0.8,0.5,0]}>
         <primitive object={obj} scale={10}/>
     </mesh>
   )
